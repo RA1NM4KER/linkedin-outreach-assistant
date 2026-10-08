@@ -41,14 +41,21 @@ export async function openMessageComposer(page: Page): Promise<Locator> {
   if (!messageButton) {
     throw new Error("Could not find a visible Message button. Confirm you are logged in and messaging is available for this profile.");
   }
-  try {
-    await messageButton.click({ timeout: 4_000 });
-  } catch (error) {
-    if (page.isClosed()) throw error;
-    // A floating LinkedIn widget can cover the profile action. Trigger the
-    // selected Message element itself instead of force-clicking its screen
-    // coordinates, which could activate the covering element.
-    await messageButton.evaluate((element: HTMLElement) => element.click());
+
+  const href = await messageButton.getAttribute("href");
+  const composeUrl = href ? new URL(href, page.url()) : null;
+  if (composeUrl?.hostname.endsWith("linkedin.com") && composeUrl.pathname.startsWith("/messaging/compose")) {
+    await page.goto(composeUrl.href, { waitUntil: "domcontentloaded", timeout: 30_000 });
+  } else {
+    try {
+      await messageButton.click({ timeout: 4_000 });
+    } catch (error) {
+      if (page.isClosed()) throw error;
+      // A floating LinkedIn widget can cover the profile action. Trigger the
+      // selected Message element itself instead of force-clicking its screen
+      // coordinates, which could activate the covering element.
+      await messageButton.evaluate((element: HTMLElement) => element.click());
+    }
   }
 
   for (const selector of linkedInSelectors.composerInputs) {
