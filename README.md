@@ -1,11 +1,12 @@
 # LinkedIn Outreach Assistant
 
-A local tool for preparing personalized LinkedIn event follow-up messages. It stores the queue and message state locally, opens profiles in a persistent Playwright Chromium session, and supports individual preparation or a confirmed test batch capped at five messages.
+A local tool for preparing personalized LinkedIn event follow-up messages. It stores the queue and message state locally, opens profiles in a persistent Playwright-controlled Brave session, and supports individual sending or a confirmed test batch capped at five messages.
 
 ## Requirements
 
 - Node.js 20.9 or newer
 - npm
+- Brave Browser (recommended and detected automatically)
 - A LinkedIn account you can log into manually
 
 ## Install and run
@@ -13,7 +14,6 @@ A local tool for preparing personalized LinkedIn event follow-up messages. It st
 ```bash
 cd linkedin-outreach-assistant
 npm install
-npm run playwright:install
 npm run dev
 ```
 
@@ -22,12 +22,12 @@ Open [http://localhost:3000](http://localhost:3000).
 ## First-time workflow
 
 1. Click **Open LinkedIn session**.
-2. A visible Chromium window opens. Log in to LinkedIn manually. The app never asks for or stores your password.
+2. A visible automated Brave window opens. Log in to LinkedIn manually. The app never asks for or stores your password.
 3. Paste a LinkedIn public event URL or organizer `/event/manage/...` URL into **Sync LinkedIn event attendees**.
 4. Click **Sync attendees**. The app opens the organizer view, enters **Manage event → Manage attendees**, scrolls until no new profiles appear, saves the result, and closes its temporary browser window.
 5. Review the imported queue. Use the × beside a contact to permanently remove and exclude them from future imports; the app asks for confirmation first. Re-importing later adds new attendees without changing existing Sent, Prepared, or Skipped statuses.
 6. Edit the reusable message template. Supported placeholders are `{firstName}` and `{fullName}`. Click **Save template**.
-7. Select a contact and click **Send in LinkedIn**. The app opens the conversation, fills and verifies the message, clicks Send, confirms the composer cleared, marks the contact Sent, then closes the automated Chromium window.
+7. Select a contact and click **Send in LinkedIn**. The app opens the conversation, fills and verifies the message, clicks Send, confirms the composer cleared, marks the contact Sent, then closes the automated Brave window.
 8. For a bounded automatic test, click **Send 5 Test Messages** and confirm the displayed names. The app processes only those pending contacts, one at a time.
 9. The test batch verifies the filled text, clicks Send, waits for the composer to clear, marks the contact Sent, and stops immediately if any step fails.
 10. Review the five conversations in LinkedIn before deliberately starting another batch.
@@ -56,12 +56,14 @@ URLs are normalized and the same LinkedIn profile URL is not imported twice. Inv
 
 - Queue data is stored in `data/outreach.json`.
 - Event URLs, import timestamps, attendee totals, visible attendee metadata, and per-import new/duplicate counts are stored with the local queue.
-- The persistent Chromium session is stored in `.playwright-profile/`.
+- The persistent automated browser session is stored in `.playwright-profile/`.
 - Both locations are gitignored.
-- LinkedIn passwords are never stored by this application. LinkedIn's own Chromium session cookies live only in the ignored browser profile.
+- LinkedIn passwords are never stored by this application. LinkedIn's own session cookies live only in the ignored browser profile.
 - The app does not rely on LinkedIn retaining drafts. Every generated message and status is in the local queue.
 
-To erase contacts, statuses, and the template, use **Clear all local data** and accept the confirmation. This does not erase the Chromium session; remove `.playwright-profile/` manually while the app is stopped if you also want to forget the LinkedIn login.
+To erase contacts, statuses, and the template, use **Clear all local data** and accept the confirmation. This does not erase the automated browser session; remove `.playwright-profile/` manually while the app is stopped if you also want to forget the LinkedIn login.
+
+Brave is detected automatically in its standard macOS, Windows, and Linux locations. To use a non-standard installation, set `LINKEDIN_BROWSER_EXECUTABLE` to the full executable path. If Brave is unavailable, install Playwright’s fallback Chromium with `npm run playwright:install`.
 
 ## Commands
 
@@ -72,7 +74,7 @@ npm run lint                # ESLint
 npm test                    # unit tests
 npm run build               # production build
 npm start                   # run the production build
-npm run playwright:install  # install Playwright Chromium
+npm run playwright:install  # optional fallback when Brave is unavailable
 ```
 
 ## LinkedIn automation limitations
@@ -81,7 +83,7 @@ LinkedIn changes its interface and may show different layouts based on account t
 
 Event importing only reads the attendee management interface LinkedIn exposes to the logged-in organizer. It does not infer private emails, visit external sites, or bypass privacy controls. Email is stored only if the official attendee row explicitly contains a visible `mailto:` link.
 
-Automatic sending is deliberately limited to one explicitly selected contact or a user-confirmed batch of at most five pending contacts. There is no Send All action, background run, or automatic retry. Keep the Playwright Chromium window open while a batch runs; successful single sends close it automatically.
+Automatic sending is deliberately limited to one explicitly selected contact or a user-confirmed batch of at most five pending contacts. There is no Send All action, background run, or automatic retry. Keep the automated Brave window open while a batch runs; successful single sends close it automatically.
 
 ## License
 

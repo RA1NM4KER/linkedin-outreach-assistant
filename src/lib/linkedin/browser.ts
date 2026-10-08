@@ -1,6 +1,7 @@
 import "server-only";
 import path from "node:path";
 import { chromium, type BrowserContext, type Page } from "playwright";
+import { findBraveExecutable } from "@/lib/linkedin/browserExecutable";
 
 declare global {
   var linkedInContextPromise: Promise<BrowserContext> | undefined;
@@ -8,7 +9,9 @@ declare global {
 
 async function createContext(): Promise<BrowserContext> {
   const profileDirectory = path.join(/* turbopackIgnore: true */ process.cwd(), ".playwright-profile");
+  const executablePath = findBraveExecutable();
   return chromium.launchPersistentContext(profileDirectory, {
+    ...(executablePath ? { executablePath } : {}),
     headless: false,
     viewport: null,
     args: ["--start-maximized"],

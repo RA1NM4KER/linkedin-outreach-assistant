@@ -2,7 +2,7 @@ export function errorMessage(error: unknown, fallback = "An unexpected error occ
   const raw = error instanceof Error ? error.message : fallback;
   const message = raw.replace(/\u001b\[[0-9;]*m/g, "").split("\nCall log:")[0].trim();
   if (/executable doesn['’]t exist|download new browsers/i.test(message)) {
-    return "The Playwright browser is not installed. Run npm run playwright:install, then retry.";
+    return "No supported browser was found. Install Brave, or run npm run playwright:install, then retry.";
   }
   if (/target page, context or browser has been closed/i.test(message)) {
     return "The LinkedIn browser closed before preparation finished. Keep it open and retry.";

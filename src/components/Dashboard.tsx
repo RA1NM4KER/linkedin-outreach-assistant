@@ -179,7 +179,7 @@ export function Dashboard({ initialState }: DashboardProps) {
     if (!confirmed) return;
 
     setBusy("batch-send");
-    setNotice({ kind: "info", text: `Sending a test batch of ${testBatch.length}. Keep the LinkedIn Chromium window open.` });
+    setNotice({ kind: "info", text: `Sending a test batch of ${testBatch.length}. Keep the automated Brave window open.` });
     try {
       if (templateDirty) await saveTemplate();
       const result = await jsonRequest<BatchSendResult>("/api/send-batch", {

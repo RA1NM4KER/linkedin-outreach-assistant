@@ -204,7 +204,7 @@ kbd { border: 1px solid var(--border-strong); border-bottom-width: 2px; border-r
 .legal-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-size: 0.9rem; font-weight: 750; text-decoration: none; }
 .legal-brand .brand-logo { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 4px 10px rgba(21, 94, 239, 0.16); }
 .legal-card { overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
-.legal-heading { padding: 34px 36px 28px; border-bottom: 1px solid var(--border); background: linear-gradient(145deg, #ffffff, #f8faff); }
+.legal-heading { padding: 34px 36px 28px; border-bottom: 1px solid var(--border); background: #f8faff; }
 .legal-heading h1 { margin-bottom: 10px; font-size: clamp(1.8rem, 5vw, 2.4rem); }
 .legal-heading > p:not(.eyebrow) { max-width: 590px; margin-bottom: 12px; color: var(--muted); font-size: 0.95rem; line-height: 1.55; }
 .legal-heading small { color: var(--muted-light); font-size: 0.74rem; }

@@ -4,7 +4,7 @@ import { errorMessage } from "@/lib/http";
 describe("errorMessage", () => {
   it("turns a missing Playwright browser into an actionable message", () => {
     expect(errorMessage(new Error("Executable doesn't exist at /tmp/chrome\nPlease download new browsers")))
-      .toBe("The Playwright browser is not installed. Run npm run playwright:install, then retry.");
+      .toBe("No supported browser was found. Install Brave, or run npm run playwright:install, then retry.");
   });
 
   it("removes Playwright call logs from stored errors", () => {
