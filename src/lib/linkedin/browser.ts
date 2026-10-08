@@ -1,17 +1,43 @@
 import "server-only";
+import { existsSync } from "node:fs";
 import path from "node:path";
-import { chromium, type BrowserContext, type Page } from "playwright";
-import { findBraveExecutable } from "@/lib/linkedin/browserExecutable";
+import { chromium, firefox, type BrowserContext, type Page } from "playwright";
+import { browserPreference, findChromiumBrowser } from "@/lib/linkedin/browserExecutable";
 
 declare global {
   var linkedInContextPromise: Promise<BrowserContext> | undefined;
 }
 
 async function createContext(): Promise<BrowserContext> {
+  const preference = browserPreference();
   const profileDirectory = path.join(/* turbopackIgnore: true */ process.cwd(), ".playwright-profile");
-  const executablePath = findBraveExecutable();
+
+  if (preference === "firefox") {
+    const configuredPath = process.env.LINKEDIN_BROWSER_EXECUTABLE?.trim();
+    if (!configuredPath && !existsSync(firefox.executablePath())) {
+      throw new Error("Firefox support is selected, but no Playwright-compatible Firefox runtime is already available.");
+    }
+    return firefox.launchPersistentContext(`${profileDirectory}-firefox`, {
+      ...(configuredPath ? { executablePath: configuredPath } : {}),
+      headless: false,
+      viewport: null,
+    });
+  }
+
+  const installedBrowser = findChromiumBrowser();
+  const bundledChromiumAvailable = existsSync(chromium.executablePath());
+  if (!installedBrowser && preference !== "auto" && preference !== "chromium") {
+    throw new Error(`The selected ${preference} browser is not installed in a standard location.`);
+  }
+  if (!installedBrowser && !bundledChromiumAvailable) {
+    if (preference === "auto" && existsSync(firefox.executablePath())) {
+      return firefox.launchPersistentContext(`${profileDirectory}-firefox`, { headless: false, viewport: null });
+    }
+    throw new Error("No compatible automation browser is already available.");
+  }
+
   return chromium.launchPersistentContext(profileDirectory, {
-    ...(executablePath ? { executablePath } : {}),
+    ...(installedBrowser ? { executablePath: installedBrowser.executablePath } : {}),
     headless: false,
     viewport: null,
     args: ["--start-maximized"],
