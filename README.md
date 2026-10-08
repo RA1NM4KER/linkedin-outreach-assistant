@@ -82,3 +82,7 @@ LinkedIn changes its interface and may show different layouts based on account t
 Event importing only reads the attendee management interface LinkedIn exposes to the logged-in organizer. It does not infer private emails, visit external sites, or bypass privacy controls. Email is stored only if the official attendee row explicitly contains a visible `mailto:` link.
 
 Automatic sending is deliberately limited to one explicitly selected contact or a user-confirmed batch of at most five pending contacts. There is no Send All action, background run, or automatic retry. Keep the Playwright Chromium window open while a batch runs; successful single sends close it automatically.
+
+## License
+
+Licensed under the [MIT License](LICENSE).

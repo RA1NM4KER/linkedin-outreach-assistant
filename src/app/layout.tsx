@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "LinkedIn Outreach — Campaign Workspace",
-  description: "Review contacts and prepare personalized LinkedIn outreach locally.",
+  title: { default: "LinkedIn Outreach — Campaign Workspace", template: "%s | LinkedIn Outreach" },
+  description: "Review contacts and send personalized LinkedIn outreach locally.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { BrandMark } from "@/components/BrandMark";
 import { QueueList } from "@/components/QueueList";
 import { EventImportPanel } from "@/components/EventImportPanel";
 import { nextPendingBatch } from "@/lib/queue";
@@ -239,14 +241,14 @@ export function Dashboard({ initialState }: DashboardProps) {
   return (
     <main className="app-shell">
       <header className="topbar">
-        <div className="brand-lockup">
-          <span className="brand-mark" aria-hidden="true">O</span>
+        <Link className="brand-lockup" href="/" aria-label="LinkedIn Outreach dashboard">
+          <BrandMark />
           <div className="topbar-copy">
             <p className="eyebrow">Campaign workspace</p>
             <h1>LinkedIn Outreach</h1>
             <p className="subtitle">Review contacts, personalize outreach, and keep every send human-approved.</p>
           </div>
-        </div>
+        </Link>
         <div className="header-actions">
           <input
             accept=".csv,text/csv"
@@ -381,9 +383,14 @@ export function Dashboard({ initialState }: DashboardProps) {
         />
       </section>
 
-      <footer>
+      <footer className="app-footer">
         <span><strong>Local workspace</strong> · Your contact data stays on this device. <kbd>Alt</kbd> + <kbd>N</kbd> sends to the next contact.</span>
-        <button className="danger-link" disabled={disabled} onClick={resetProject} type="button">Clear all local data</button>
+        <nav className="footer-actions" aria-label="Footer">
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+          <a href="https://github.com/RA1NM4KER/linkedin-outreach-assistant/blob/main/LICENSE" rel="noreferrer" target="_blank">MIT License</a>
+          <button className="danger-link" disabled={disabled} onClick={resetProject} type="button">Clear all local data</button>
+        </nav>
       </footer>
     </main>
   );
