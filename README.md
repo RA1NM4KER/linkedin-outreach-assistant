@@ -1,6 +1,50 @@
-# LinkedIn Outreach Assistant
+<p align="center">
+  <img src="src/app/icon.svg" width="76" height="76" alt="LinkedIn Outreach Assistant logo">
+</p>
 
-A local tool for personalized LinkedIn event follow-up messages. It stores the queue and message state locally, opens profiles in a persistent Playwright-controlled browser session, and supports individual sending or a confirmed test batch capped at five messages.
+<h1 align="center">LinkedIn Event Follow-Up Assistant</h1>
+
+<p align="center">
+  Import attendees, personalize outreach, and keep every LinkedIn send human-approved—without handing contact data to another SaaS tool.
+</p>
+
+<p align="center">
+  <a href="https://github.com/RA1NM4KER/linkedin-outreach-assistant/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/RA1NM4KER/linkedin-outreach-assistant/ci.yml?branch=main&style=flat&label=CI"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/RA1NM4KER/linkedin-outreach-assistant?style=flat"></a>
+  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-111827?style=flat">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-155EEF?style=flat">
+</p>
+
+<p align="center">
+  <img src="docs/assets/demo.gif" alt="Sanitized walkthrough showing event sync, message review, and local send tracking" width="960">
+</p>
+
+## Why this exists
+
+Event follow-up often turns into a fragile spreadsheet, dozens of open tabs, and no reliable record of who received what. This application keeps the workflow in one local workspace while using a browser session you control.
+
+It is intentionally **not** a background mass-messaging bot. Every single send is explicitly initiated, test batches are capped at five and require confirmation, failures stop the batch, and nothing retries automatically.
+
+## Who it is for
+
+- Event organizers following up with visible LinkedIn attendees
+- Community managers and founder-program teams
+- Small teams that want a local queue instead of another hosted CRM
+- Developers who want an auditable Playwright workflow they can extend
+
+## Highlights
+
+- Sync attendees visible in a LinkedIn event organizer view
+- Import and export a CSV fallback
+- Personalize reusable messages with `{firstName}` and `{fullName}`
+- Review the exact message before initiating a send
+- Verify composer contents and LinkedIn’s send completion signal
+- Track Pending, Prepared, Sent, Skipped, and Failed states locally
+- Detect installed Brave, Chrome, Edge, and Chromium browsers automatically
+- Keep contacts, templates, statuses, and browser sessions on your machine
+- Cap confirmed test batches at five contacts
+
+![Sanitized dashboard showing the local event follow-up queue](docs/assets/dashboard.png)
 
 ## Requirements
 
@@ -12,6 +56,7 @@ A local tool for personalized LinkedIn event follow-up messages. It stores the q
 ## Install and run
 
 ```bash
+git clone https://github.com/RA1NM4KER/linkedin-outreach-assistant.git
 cd linkedin-outreach-assistant
 npm install
 npm run dev
@@ -86,6 +131,13 @@ LinkedIn changes its interface and may show different layouts based on account t
 Event importing only reads the attendee management interface LinkedIn exposes to the logged-in organizer. It does not infer private emails, visit external sites, or bypass privacy controls. Email is stored only if the official attendee row explicitly contains a visible `mailto:` link.
 
 Automatic sending is deliberately limited to one explicitly selected contact or a user-confirmed batch of at most five pending contacts. There is no Send All action, background run, or automatic retry. Keep the automated browser window open while a batch runs; successful single sends close it automatically.
+
+## Support and contributing
+
+- Ask usage questions in [GitHub Discussions](https://github.com/RA1NM4KER/linkedin-outreach-assistant/discussions).
+- Report reproducible defects with the [bug report form](https://github.com/RA1NM4KER/linkedin-outreach-assistant/issues/new?template=bug_report.yml).
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+- Report vulnerabilities privately through the repository’s [security advisory form](https://github.com/RA1NM4KER/linkedin-outreach-assistant/security/advisories/new).
 
 ## License
 
