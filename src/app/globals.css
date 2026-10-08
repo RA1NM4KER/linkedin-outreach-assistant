@@ -146,7 +146,6 @@ h2 { margin-bottom: 0; font-size: 1.08rem; letter-spacing: -0.018em; line-height
 .secondary-actions button, .text-button { padding: 0; color: var(--accent); border: 0; background: transparent; font-size: 0.76rem; font-weight: 650; cursor: pointer; }
 .secondary-actions button:hover:not(:disabled), .text-button:hover:not(:disabled) { text-decoration: underline; }
 .secondary-actions button:last-child { margin-left: auto; color: var(--muted); }
-.inline-error { margin-top: 10px; border: 1px solid #fecdca; border-radius: 7px; padding: 9px 11px; color: var(--red); background: var(--red-soft); font-size: 0.79rem; }
 .empty-state { margin-top: 22px; padding: 40px 20px; text-align: center; border: 1px dashed var(--border-strong); border-radius: 9px; color: var(--muted); }
 .empty-state strong { display: block; margin-bottom: 6px; color: var(--ink); }
 .empty-state p { margin-bottom: 0; font-size: 0.84rem; }

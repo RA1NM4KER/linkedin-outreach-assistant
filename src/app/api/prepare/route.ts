@@ -1,4 +1,4 @@
-import { errorResponse } from "@/lib/http";
+import { errorMessage } from "@/lib/http";
 import { prepareLinkedInMessage } from "@/lib/linkedin/prepareMessage";
 import { getState, markFailed, markPrepared } from "@/lib/storage/store";
 
@@ -17,8 +17,8 @@ export async function POST(request: Request) {
     await markPrepared(contact.id);
     return Response.json({ ok: true });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "LinkedIn automation failed.";
-    if (contactId) await markFailed(contactId, message).catch(() => undefined);
-    return errorResponse(error);
+    const message = errorMessage(error, "LinkedIn automation failed.");
+    if (contactId) await markFailed(contactId).catch(() => undefined);
+    return Response.json({ error: message }, { status: 500 });
   }
 }

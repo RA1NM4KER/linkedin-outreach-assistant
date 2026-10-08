@@ -26,6 +26,11 @@ async function readData(): Promise<AppData> {
   await mkdir(dataDirectory, { recursive: true });
   try {
     const parsed = JSON.parse(await readFile(dataFile, "utf8")) as AppData;
+    // Automation failures are transient runtime feedback, not contact data.
+    // Drop messages written by older versions so they do not reappear after restart.
+    parsed.contacts.forEach((contact) => {
+      contact.error = undefined;
+    });
     return { ...parsed, excludedContacts: parsed.excludedContacts ?? [], eventImports: parsed.eventImports ?? [] };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return emptyData();
@@ -146,12 +151,12 @@ export async function markPrepared(id: string): Promise<void> {
   });
 }
 
-export async function markFailed(id: string, message: string): Promise<void> {
+export async function markFailed(id: string): Promise<void> {
   await mutate((data) => {
     const contact = data.contacts.find((item) => item.id === id);
     if (!contact) throw new Error("Contact not found.");
     contact.status = "failed";
-    contact.error = message;
+    contact.error = undefined;
     contact.updatedAt = new Date().toISOString();
   });
 }

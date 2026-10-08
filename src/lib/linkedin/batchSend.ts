@@ -1,4 +1,5 @@
 import "server-only";
+import { errorMessage } from "@/lib/http";
 import { sendLinkedInMessage } from "@/lib/linkedin/prepareMessage";
 import { markFailed, updateContactStatus } from "@/lib/storage/store";
 import type { BatchSendResult, Contact } from "@/types";
@@ -15,8 +16,8 @@ async function runBatch(contacts: Contact[]): Promise<BatchSendResult> {
       await updateContactStatus(contact.id, "sent");
       result.sent.push({ id: contact.id, fullName: contact.fullName });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "LinkedIn automation failed.";
-      await markFailed(contact.id, message).catch(() => undefined);
+      const message = errorMessage(error, "LinkedIn automation failed.");
+      await markFailed(contact.id).catch(() => undefined);
       result.failed = { id: contact.id, fullName: contact.fullName, error: message };
       break;
     }

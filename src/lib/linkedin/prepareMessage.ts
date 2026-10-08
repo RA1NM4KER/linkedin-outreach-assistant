@@ -41,7 +41,12 @@ export async function openMessageComposer(page: Page): Promise<Locator> {
   if (!messageButton) {
     throw new Error("Could not find a visible Message button. Confirm you are logged in and messaging is available for this profile.");
   }
-  await messageButton.click();
+  try {
+    await messageButton.click({ timeout: 4_000 });
+  } catch (error) {
+    if (page.isClosed()) throw error;
+    await messageButton.click({ force: true, timeout: 5_000 });
+  }
 
   for (const selector of linkedInSelectors.composerInputs) {
     const candidate = page.locator(selector).last();

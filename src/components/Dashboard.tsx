@@ -310,7 +310,6 @@ export function Dashboard({ initialState }: DashboardProps) {
                 </div>
                 <pre>{preview}</pre>
               </div>
-              {current.error && <div className="inline-error"><strong>Automation error:</strong> {current.error}</div>}
               <div className="primary-actions">
                 <button className="button batch" disabled={disabled || testBatch.length === 0} onClick={() => void sendFiveTestMessages()} type="button">
                   {busy === "batch-send" ? "Sending test batch…" : `Send ${testBatch.length || 5} Test Messages`}
