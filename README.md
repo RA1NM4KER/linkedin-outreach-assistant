@@ -27,7 +27,7 @@ Open [http://localhost:3000](http://localhost:3000).
 4. Click **Sync attendees**. The app opens the organizer view, enters **Manage event → Manage attendees**, scrolls until no new profiles appear, saves the result, and closes its temporary browser window.
 5. Review the imported queue. Use the × beside a contact to permanently remove and exclude them from future imports; the app asks for confirmation first. Re-importing later adds new attendees without changing existing Sent, Prepared, or Skipped statuses.
 6. Edit the reusable message template. Supported placeholders are `{firstName}` and `{fullName}`. Click **Save template**.
-7. For the original manual flow, select a contact and click **Prepare in LinkedIn**. The app opens their profile, clicks Message, and fills the composer for your review and manual Send click.
+7. Select a contact and click **Send in LinkedIn**. The app opens the conversation, fills and verifies the message, clicks Send, confirms the composer cleared, marks the contact Sent, then closes the automated Chromium window.
 8. For a bounded automatic test, click **Send 5 Test Messages** and confirm the displayed names. The app processes only those pending contacts, one at a time.
 9. The test batch verifies the filled text, clicks Send, waits for the composer to clear, marks the contact Sent, and stops immediately if any step fails.
 10. Review the five conversations in LinkedIn before deliberately starting another batch.
@@ -81,4 +81,4 @@ LinkedIn changes its interface and may show different layouts based on account t
 
 Event importing only reads the attendee management interface LinkedIn exposes to the logged-in organizer. It does not infer private emails, visit external sites, or bypass privacy controls. Email is stored only if the official attendee row explicitly contains a visible `mailto:` link.
 
-Automatic sending is deliberately limited to a user-confirmed batch of at most five pending contacts. There is no Send All action, background run, or automatic retry. Keep the Playwright Chromium window open and watch the batch while it runs.
+Automatic sending is deliberately limited to one explicitly selected contact or a user-confirmed batch of at most five pending contacts. There is no Send All action, background run, or automatic retry. Keep the Playwright Chromium window open while a batch runs; successful single sends close it automatically.

@@ -1,6 +1,7 @@
 import { errorMessage } from "@/lib/http";
-import { prepareLinkedInMessage } from "@/lib/linkedin/prepareMessage";
-import { getState, markFailed, markPrepared } from "@/lib/storage/store";
+import { closeLinkedInBrowser } from "@/lib/linkedin/browser";
+import { sendLinkedInMessage } from "@/lib/linkedin/prepareMessage";
+import { getState, markFailed, updateContactStatus } from "@/lib/storage/store";
 
 export const maxDuration = 60;
 
@@ -13,8 +14,12 @@ export async function POST(request: Request) {
     const state = await getState();
     const contact = state.contacts.find((item) => item.id === contactId);
     if (!contact) return Response.json({ error: "Contact not found." }, { status: 404 });
-    await prepareLinkedInMessage(contact.linkedinUrl, contact.message);
-    await markPrepared(contact.id);
+    if (contact.status === "sent" || contact.status === "skipped") {
+      return Response.json({ error: `This contact is already marked ${contact.status}.` }, { status: 409 });
+    }
+    await sendLinkedInMessage(contact.linkedinUrl, contact.message);
+    await updateContactStatus(contact.id, "sent");
+    await closeLinkedInBrowser();
     return Response.json({ ok: true });
   } catch (error) {
     const message = errorMessage(error, "LinkedIn automation failed.");

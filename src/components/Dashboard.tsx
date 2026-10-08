@@ -58,9 +58,9 @@ export function Dashboard({ initialState }: DashboardProps) {
     });
   }, [templateDraft]);
 
-  const prepareContact = useCallback(async (contact: Contact) => {
-    setBusy("prepare");
-    setNotice({ kind: "info", text: `Preparing ${contact.fullName}. LinkedIn may take a moment to open.` });
+  const sendContact = useCallback(async (contact: Contact) => {
+    setBusy("send");
+    setNotice({ kind: "info", text: `Sending to ${contact.fullName}. LinkedIn may take a moment to open.` });
     try {
       if (templateDraft !== state.template) await saveTemplate();
       await jsonRequest("/api/prepare", {
@@ -69,7 +69,7 @@ export function Dashboard({ initialState }: DashboardProps) {
         body: JSON.stringify({ contactId: contact.id }),
       });
       await refresh();
-      setNotice({ kind: "success", text: `Message prepared for ${contact.fullName}. Review it in LinkedIn, then click Send yourself.` });
+      setNotice({ kind: "success", text: `Message sent to ${contact.fullName}. LinkedIn closed and the next contact is ready.` });
     } catch (error) {
       await refresh().catch(() => undefined);
       setNotice({ kind: "error", text: error instanceof Error ? error.message : "Automation failed." });
@@ -78,27 +78,27 @@ export function Dashboard({ initialState }: DashboardProps) {
     }
   }, [refresh, saveTemplate, state.template, templateDraft]);
 
-  const prepareNext = useCallback(async () => {
+  const sendNext = useCallback(async () => {
     const pending = current && (current.status === "pending" || current.status === "failed")
       ? current
       : state.contacts.find((contact) => contact.status === "pending" || contact.status === "failed");
     if (!pending) {
-      setNotice({ kind: "info", text: "There are no pending or failed contacts left to prepare." });
+      setNotice({ kind: "info", text: "There are no pending or failed contacts left to send." });
       return;
     }
-    await prepareContact(pending);
-  }, [current, prepareContact, state.contacts]);
+    await sendContact(pending);
+  }, [current, sendContact, state.contacts]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.altKey && event.key.toLowerCase() === "n") {
         event.preventDefault();
-        void prepareNext();
+        void sendNext();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [prepareNext]);
+  }, [sendNext]);
 
   async function runAction(key: string, action: () => Promise<void>, success?: string) {
     setBusy(key);
@@ -314,13 +314,13 @@ export function Dashboard({ initialState }: DashboardProps) {
                 <button className="button batch" disabled={disabled || testBatch.length === 0} onClick={() => void sendFiveTestMessages()} type="button">
                   {busy === "batch-send" ? "Sending test batch…" : `Send ${testBatch.length || 5} Test Messages`}
                 </button>
-                <button className="button primary" disabled={disabled} onClick={() => void prepareContact(current)} type="button">
-                  {busy === "prepare" ? "Preparing in LinkedIn…" : current.status === "failed" ? "Retry in LinkedIn" : "Prepare in LinkedIn"}
+                <button className="button primary" disabled={disabled || current.status === "sent" || current.status === "skipped"} onClick={() => void sendContact(current)} type="button">
+                  {busy === "send" ? "Sending in LinkedIn…" : current.status === "failed" ? "Retry Send" : "Send in LinkedIn"}
                 </button>
                 <button className="button success" disabled={disabled} onClick={() => changeStatus("sent")} type="button">Mark Sent</button>
                 <button className="button secondary" disabled={disabled} onClick={() => changeStatus("skipped")} type="button">Skip</button>
               </div>
-              <p className="safety-note">Test batches are capped at five, require confirmation, stop on the first error, and are never retried automatically.</p>
+              <p className="safety-note">Single sends click LinkedIn’s Send button immediately. Test batches require confirmation, stop on the first error, and are never retried automatically.</p>
               <div className="secondary-actions">
                 <button disabled={disabled} onClick={() => move("previous")} type="button">← Previous</button>
                 <button disabled={disabled} onClick={() => move("next")} type="button">Next →</button>
@@ -369,7 +369,7 @@ export function Dashboard({ initialState }: DashboardProps) {
               <option value="all">All statuses</option>
               {CONTACT_STATUSES.map((status) => <option key={status} value={status}>{status[0].toUpperCase() + status.slice(1)}</option>)}
             </select>
-            <button className="button primary compact" disabled={disabled || state.contacts.length === 0} onClick={() => void prepareNext()} title="Keyboard shortcut: Alt+N" type="button">Prepare Next</button>
+            <button className="button primary compact" disabled={disabled || state.contacts.length === 0} onClick={() => void sendNext()} title="Keyboard shortcut: Alt+N" type="button">Send Next</button>
           </div>
         </div>
         <QueueList
@@ -382,7 +382,7 @@ export function Dashboard({ initialState }: DashboardProps) {
       </section>
 
       <footer>
-        <span><strong>Local workspace</strong> · Your contact data stays on this device. <kbd>Alt</kbd> + <kbd>N</kbd> prepares the next contact.</span>
+        <span><strong>Local workspace</strong> · Your contact data stays on this device. <kbd>Alt</kbd> + <kbd>N</kbd> sends to the next contact.</span>
         <button className="danger-link" disabled={disabled} onClick={resetProject} type="button">Clear all local data</button>
       </footer>
     </main>
