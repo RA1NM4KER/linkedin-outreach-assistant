@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.playwright-profile/
+data/*
+!data/.gitkeep
+*.log
+npm-debug.log*
+playwright-report/
+test-results/
+*.tsbuildinfo
+.DS_Store
