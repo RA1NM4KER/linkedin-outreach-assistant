@@ -45,7 +45,10 @@ export async function openMessageComposer(page: Page): Promise<Locator> {
     await messageButton.click({ timeout: 4_000 });
   } catch (error) {
     if (page.isClosed()) throw error;
-    await messageButton.click({ force: true, timeout: 5_000 });
+    // A floating LinkedIn widget can cover the profile action. Trigger the
+    // selected Message element itself instead of force-clicking its screen
+    // coordinates, which could activate the covering element.
+    await messageButton.evaluate((element: HTMLElement) => element.click());
   }
 
   for (const selector of linkedInSelectors.composerInputs) {

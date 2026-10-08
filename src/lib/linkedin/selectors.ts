@@ -1,8 +1,10 @@
 export const linkedInSelectors = {
   messageButtons: [
-    'button:has-text("Message")',
-    'a:has-text("Message")',
-    '[aria-label^="Message "]',
+    'main a[href*="/messaging/compose"]',
+    'main button[aria-label="Message"]',
+    'main button[aria-label^="Message "]',
+    'main button:text-is("Message")',
+    'main a:text-is("Message")',
   ],
   composerInputs: [
     'div.msg-form__contenteditable[contenteditable="true"]',
