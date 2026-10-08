@@ -1,6 +1,7 @@
 import "server-only";
 import type { ElementHandle, Locator, Page } from "playwright";
 import { getLinkedInPage } from "@/lib/linkedin/browser";
+import { normalizeMessageText } from "@/lib/linkedin/messageText";
 import { linkedInSelectors } from "@/lib/linkedin/selectors";
 
 async function firstVisible(page: Page, selectors: readonly string[]): Promise<Locator | null> {
@@ -126,8 +127,8 @@ export async function sendLinkedInMessage(linkedinUrl: string, message: string):
   await openProfile(page, linkedinUrl);
   const composer = await openMessageComposer(page);
   await fillMessage(composer, message);
-  const filledText = (await composer.innerText()).replaceAll("\r\n", "\n").trim();
-  if (filledText !== message.replaceAll("\r\n", "\n").trim()) {
+  const filledText = normalizeMessageText(await composer.innerText());
+  if (filledText !== normalizeMessageText(message)) {
     throw new Error("LinkedIn's composer text did not match the prepared message, so Send was not clicked.");
   }
   await clickSend(page, composer);
